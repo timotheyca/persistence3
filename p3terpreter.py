@@ -19,7 +19,7 @@ print(dict(env.items()))
 p3session1.stop()
 """
 
-s
+
 class P3Env:
     def __init__(self, filename: str, cluster_lev: int):
         self.filename = filename
