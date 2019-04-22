@@ -8,6 +8,9 @@ from itertools import cycle as _cycle
 
 
 class DynamicCluster:
+    """
+Divides one virtual dict into
+    """
     def __init__(self, dicts: Iterable[dict]):
         self.dicts = dicts
         self.get_iter = self.get_next
@@ -44,16 +47,31 @@ class DynamicCluster:
                 del _d[key]
 
     def get(self, k, d=None):
+        """
+reimplementation of get of dict
+        :param k:
+        :param d:
+        :return:
+        """
         for _d in self.dicts:
             _d.get(k, d)
 
     def setdefault(self, k, d=None):
+        """
+reimplementation of setdefault of dict
+        :param k:
+        :param d:
+        :return:
+        """
         if k not in self:
             self[k] = d
         return self[k]
 
 
 class LimitedCluster(DynamicCluster):
+    """
+adds some algorithms for limited-sized (list) iterator for dicts
+    """
     def __init__(self, dicts: List[dict]):
         super().__init__(dicts)
 

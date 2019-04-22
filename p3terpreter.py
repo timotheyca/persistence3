@@ -1,11 +1,5 @@
-from pers3cluster import LimitedCluster
-from persistence3 import Persistence3
-from typing import List, Optional
-import threading
-from time import sleep, time
+"""Persistence protocol v3
 
-
-"""
 Example:
 p3env1 = P3Env("abc", 2)
 p3session1 = P3Session(p3env1)
@@ -18,6 +12,12 @@ print(dict(env.items()))
 
 p3session1.stop()
 """
+
+from pers3cluster import LimitedCluster
+from persistence3 import Persistence3
+from typing import List, Optional
+import threading
+from time import sleep, time
 
 
 class P3Env:
@@ -43,12 +43,16 @@ cleans env cluster
         self.env.clean()
 
     def save_all(self):
+        """
+saves every its persistence
+        :return:
+        """
         for env_i in self.env_list:
             env_i.save()
 
     def wipe(self, skip=False):
         """
-
+clears env
         :param skip: whether skip Y/n question
         """
         if not skip:
