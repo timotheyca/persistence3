@@ -29,12 +29,17 @@ class P3Env:
         self.env: Optional[LimitedCluster] = None
 
     def init_env(self):
+        """
+initializes files
+initializes pickle'd objects (.o) in persistence
+initializes cluster with persistence
+cleans env cluster
+        """
         self.env_list: List[Persistence3] = [Persistence3(self.filename + '_' + str(_i)) for _i in range(self.size)]
         for env_i in self.env_list:
             if type(env_i.o) != dict:
                 env_i.o = {}
         self.env = LimitedCluster([env_i.o for env_i in self.env_list])
-        print(self.env)
         self.env.clean()
 
     def save_all(self):
@@ -42,18 +47,18 @@ class P3Env:
             env_i.save()
 
     def wipe(self, skip=False):
+        """
+
+        :param skip: whether skip Y/n question
+        """
         if not skip:
-            if input("proceed wiping? Y/n") not in ["Y", "y"]:
+            if input("proceed wiping? Y/n") not in ["Y", "y", ""]:
                 return -1
         self.env.clear()
         return 0
 
 
 class P3Session(threading.Thread):
-    """P3Session is an isolated
-
-    """
-
     def __init__(self, p3env: P3Env, do_print: bool = True, delta_tick: float = 2, save_mu: int = 5):
         super().__init__()
         self.save_mu = save_mu
@@ -64,6 +69,9 @@ class P3Session(threading.Thread):
         self.env = p3env.env
 
         class AutoSave(threading.Thread):
+            """
+            Thread responsible for autoSave while running
+            """
             def __init__(self, p3s: P3Session):
                 super().__init__()
                 self.p3s = p3s
@@ -87,6 +95,9 @@ class P3Session(threading.Thread):
         self.autoSave = AutoSave(self)
 
     def log(self, s: str):
+        """
+prints output (s) as standard form time+filename+s
+        """
         print("[{}][{}] {}".format(time(), self.p3env.filename, s))
 
     def run(self) -> None:
