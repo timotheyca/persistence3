@@ -1,16 +1,4 @@
 """Persistence protocol v3
-
-Example:
-p3env1 = P3Env("abc", 2)
-p3session1 = P3Session(p3env1)
-p3session1.start()
-p3session1.wait_running()
-
-env = p3session1.env
-
-print(dict(env.items()))
-
-p3session1.stop()
 """
 
 from pers3cluster import LimitedCluster
