@@ -115,3 +115,6 @@ dmypy.json
 
 #idea and Pycharm
 .idea/
+
+*.pers3.bin
+cangiroo.py

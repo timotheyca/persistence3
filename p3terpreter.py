@@ -63,7 +63,8 @@ clears env
 
 
 class P3Session(threading.Thread):
-    def __init__(self, p3env: P3Env, do_print: bool = True, delta_tick: float = 2, save_mu: int = 5):
+    def __init__(self, p3env: P3Env, do_print: bool = True, delta_tick: float = 2, save_mu: int = 5,
+                 daemon: bool = False):
         super().__init__()
         self.save_mu = save_mu
         self.delta_tick = delta_tick
@@ -76,8 +77,9 @@ class P3Session(threading.Thread):
             """
             Thread responsible for autoSave while running
             """
-            def __init__(self, p3s: P3Session):
-                super().__init__()
+            def __init__(self, p3s: P3Session,
+                         daemon_save: bool = False):
+                super().__init__(daemon=daemon_save)
                 self.p3s = p3s
 
             def run(self) -> None:
@@ -92,11 +94,8 @@ class P3Session(threading.Thread):
                             if not self.p3s.running:
                                 break
                             sleep(self.p3s.delta_tick)
-                self.p3s.p3env.save_all()
-                if self.p3s.do_print:
-                    self.p3s.log("saved all")
 
-        self.autoSave = AutoSave(self)
+        self.autoSave = AutoSave(self, daemon)
 
     def log(self, s: str):
         """
@@ -110,10 +109,20 @@ prints output (s) as standard form time+filename+s
         self.running = True
         self.autoSave.start()
         while self.running:
+            self.running = threading.main_thread().isAlive()
             sleep(self.delta_tick)
+        self.p3env.save_all()
+        if self.do_print:
+            self.log("saved all")
+        self.stop_seq()
+
+    def stop_seq(self):
         while self.autoSave.isAlive():
             self.log("stopping autoSave")
             self.autoSave.join(self.delta_tick)
+
+    def __del__(self):
+        self.stop_seq()
 
     def stop(self):
         self.running = False

@@ -9,7 +9,7 @@ from itertools import cycle as _cycle
 
 class DynamicCluster:
     """
-Divides one virtual dict into
+Unites dicts as one virtual dict
     """
     def __init__(self, dicts: Iterable[dict]):
         self.dicts = dicts
@@ -74,6 +74,7 @@ adds some algorithms for limited-sized (list) iterator for dicts
     """
     def __init__(self, dicts: List[dict]):
         super().__init__(dicts)
+        self.dicts = dicts
 
     def items(self):
         _d_out = {}
@@ -93,3 +94,14 @@ adds some algorithms for limited-sized (list) iterator for dicts
     def clear(self):
         for _d in self.dicts:
             _d.clear()
+
+    def sub_cluster(self, name: str):
+        _dicts: List[dict] = []
+        for _i in range(len(self.dicts)):
+            _d = self.dicts[_i]
+            full_name = '__sub_cluster_{}__'.format(_i) + name
+            _d.setdefault(full_name, {})
+            if type(_d[full_name]) != dict:
+                _d[full_name] = {}
+            _dicts.append(_d[full_name])
+        return LimitedCluster(_dicts)

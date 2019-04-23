@@ -11,13 +11,13 @@ class Persistence3:
         self.o = object()
         self.filename = filename
         self.load()
-        with open(filename + '_pre-dump.bin', 'wb') as _f:
+        with open(filename + '_pre-dump.pers3.bin', 'wb') as _f:
             _pickle.dump(self.o, _f)
         self.save()
 
     def load(self):
         try:
-            with open(self.filename + '.bin', 'rb') as _f:
+            with open(self.filename + '.pers3.bin', 'rb') as _f:
                 self.o = _pickle.load(_f)
         except FileNotFoundError:
             pass
@@ -25,11 +25,11 @@ class Persistence3:
             pass
 
     def save(self):
-        with open(self.filename + '.bin', 'wb') as _f:
+        with open(self.filename + '.pers3.bin', 'wb') as _f:
             _pickle.dump(self.o, _f)
 
     def restore(self, do_replace=False):
-        with open(self.filename + '_pre-dump.bin', 'rb') as _f:
+        with open(self.filename + '_pre-dump.pers3.bin', 'rb') as _f:
             _o = _pickle.load(_f)
             if do_replace:
                 self.o = _o
