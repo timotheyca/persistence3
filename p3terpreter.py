@@ -18,10 +18,10 @@ class P3Env:
 
     def init_env(self):
         """
-initializes files
-initializes pickle'd objects (.o) in persistence
-initializes cluster with persistence
-cleans env cluster
+        initializes files
+        initializes pickle'd objects (.o) in persistence
+        initializes cluster with persistence
+        cleans env cluster
         """
         self.env_list: List[Persistence3] = [Persistence3(self.filename + '_' + str(_i)) for _i in range(self.size)]
         for env_i in self.env_list:
@@ -32,7 +32,7 @@ cleans env cluster
 
     def save_all(self):
         """
-saves every its persistence
+        saves every its persistence
         :return:
         """
         for env_i in self.env_list:
@@ -40,7 +40,7 @@ saves every its persistence
 
     def wipe(self, skip=False):
         """
-clears env
+        clears env
         :param skip: whether skip Y/n question
         """
         if not skip:
@@ -118,3 +118,7 @@ prints output (s) as standard form time+filename+s
     def wait_running(self, d_time: float = 0.0001):
         while not self.running:
             sleep(d_time)
+
+    def start_wait(self):
+        self.start()
+        self.wait_running()

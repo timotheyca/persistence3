@@ -1,5 +1,4 @@
 """Persistence protocol v3
-union of dicts
 """
 
 
@@ -7,9 +6,13 @@ from typing import List, Iterator, Hashable, Iterable
 from itertools import cycle as _cycle
 
 
+class SubClassException(BaseException):
+    pass
+
+
 class DynamicCluster:
     """
-Unites dicts as one virtual dict
+    Unites dicts as one virtual dict
     """
     def __init__(self, dicts: Iterable[dict]):
         self.dicts = dicts
@@ -48,21 +51,24 @@ Unites dicts as one virtual dict
 
     def get(self, k, d=None):
         """
-reimplementation of get of dict
+        reimplementation of get of dict
         :param k:
         :param d:
         :return:
         """
-        for _d in self.dicts:
-            _d.get(k, d)
+        if k not in self or type(k) == str and k.startswith('__sub_cluster__'):
+            return d
+        return self[k]
 
     def setdefault(self, k, d=None):
         """
-reimplementation of setdefault of dict
+        reimplementation of setdefault of dict
         :param k:
         :param d:
         :return:
         """
+        if type(k) == str and k.startswith('__sub_cluster__'):
+            raise SubClassException("cannot set __sub_cluster__")
         if k not in self:
             self[k] = d
         return self[k]
@@ -70,7 +76,7 @@ reimplementation of setdefault of dict
 
 class LimitedCluster(DynamicCluster):
     """
-adds some algorithms for limited-sized (list) iterator for dicts
+    adds some algorithms for limited-sized (list) iterator for dicts
     """
     def __init__(self, dicts: List[dict]):
         super().__init__(dicts)
@@ -80,13 +86,23 @@ adds some algorithms for limited-sized (list) iterator for dicts
         _d_out = {}
         for _d in self.dicts:
             for key in _d:
+                if type(key) == str and key.startswith('__sub_cluster__'):
+                    continue
                 _d_out[key] = _d[key]
         return _d_out.items()
 
     def clean(self):
         _d_self = dict(self.items())
         for _d in self.dicts:
+            sub_clusters = {}
+            for key in _d:
+                if type(key) == str:
+                    key: str = key
+                    if key.startswith('__sub_cluster__'):
+                        sub_clusters[key] = _d[key]
             _d.clear()
+            for key in sub_clusters:
+                _d[key] = sub_clusters[key]
         for key in _d_self:
             self[key] = _d_self[key]
         return _d_self
@@ -99,7 +115,7 @@ adds some algorithms for limited-sized (list) iterator for dicts
         _dicts: List[dict] = []
         for _i in range(len(self.dicts)):
             _d = self.dicts[_i]
-            full_name = '__sub_cluster_{}__'.format(_i) + name
+            full_name = '__sub_cluster__' + name
             _d.setdefault(full_name, {})
             if type(_d[full_name]) != dict:
                 _d[full_name] = {}
