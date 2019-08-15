@@ -64,6 +64,7 @@ class P3Session(threading.Thread):
         self.p3env = p3env
         self.running = False
         self.env = p3env.env
+        self._stopped = False
 
         class AutoSave(threading.Thread):
             """
@@ -109,9 +110,12 @@ prints output (s) as standard form time+filename+s
         self.stop_seq()
 
     def stop_seq(self):
+        if self._stopped:
+            return
         while self.autoSave.isAlive():
             self.log("stopping autoSave")
             self.autoSave.join(self.delta_tick)
+        self._stopped = True
 
     def __del__(self):
         self.stop_seq()
