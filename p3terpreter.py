@@ -6,6 +6,7 @@ from persistence3 import Persistence3
 from typing import List, Optional
 import threading
 from time import sleep, time
+import logging
 
 
 class P3Env:
@@ -89,7 +90,7 @@ class P3Session(threading.Thread):
         """
 prints output (s) as standard form time+filename+s
         """
-        print("[{}][{}] {}".format(time(), self.p3env.filename, s))
+        logging.info("[{}][{}] {}".format(time(), self.p3env.filename, s))
 
     def run(self) -> None:
         self.p3env.init_env()
