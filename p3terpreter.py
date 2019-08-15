@@ -9,6 +9,9 @@ from time import sleep, time
 import logging
 
 
+logger = logging.getLogger(__name__)
+
+
 class P3Env:
     def __init__(self, filename: str, cluster_lev: int):
         self.filename = filename
@@ -90,7 +93,7 @@ class P3Session(threading.Thread):
         """
 prints output (s) as standard form time+filename+s
         """
-        logging.info("[{}][{}] {}".format(time(), self.p3env.filename, s))
+        logger.info("[{}][{}] {}".format(time(), self.p3env.filename, s))
 
     def run(self) -> None:
         self.p3env.init_env()
