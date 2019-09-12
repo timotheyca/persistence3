@@ -1,15 +1,14 @@
 """Persistence protocol v3
 """
 
-from ptvp3.pers3cluster import LimitedCluster
-from ptvp3 import Persistence3
+from .abstraction.pers3cluster import LimitedCluster
+from . import Persistence3
 from typing import List, Optional
 import threading
 from time import sleep, time
 import logging
 from traceback import print_exc
-import sys
-import json
+import code
 
 logger = logging.getLogger(__name__)
 
@@ -167,7 +166,7 @@ class P3terpreter:
         if self.sfn:
             self.attachtofile(self.sfn)
             return
-        raise NotImplementedError
+        code.interact(local={'__p3penv__': self.env})
 
     def start(self):
         self.session.start_wait()
@@ -179,9 +178,3 @@ class P3terpreter:
 
     def attachtofile(self, fn: str):
         exec(open(fn).read(), {'__p3penv__': self.env, '__name__': "__p3pmain__"})
-
-
-if __name__ == '__main__':
-    print(sys.argv)
-    p3p = P3terpreter.from_param_dict(json.load(open(sys.argv[1])))
-    p3p.start()

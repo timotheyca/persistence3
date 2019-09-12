@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(
-    name='persistence3',
+    name='ptv-p3',
     version='0.0.1.1',
     packages=['ptvp3'],
     url='https://github.com/timotheyca/persistence3',
