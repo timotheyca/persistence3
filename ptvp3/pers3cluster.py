@@ -6,7 +6,7 @@ from typing import List, Iterator, Hashable, Iterable
 from itertools import cycle as _cycle
 
 
-class SubClassException(BaseException):
+class SubClusterException(BaseException):
     pass
 
 
@@ -68,7 +68,7 @@ class DynamicCluster:
         :return:
         """
         if type(k) == str and k.startswith('__sub_cluster__'):
-            raise SubClassException("cannot set __sub_cluster__")
+            raise SubClusterException("cannot set __sub_cluster__")
         if k not in self:
             self[k] = d
         return self[k]

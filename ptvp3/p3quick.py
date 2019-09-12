@@ -1,4 +1,4 @@
-from p3terpreter import *
+from ptvp3.p3terpreter import *
 
 
 def fast_start(name: str, cluster_lev: int = 2):

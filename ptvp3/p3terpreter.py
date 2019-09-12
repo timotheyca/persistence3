@@ -1,13 +1,15 @@
 """Persistence protocol v3
 """
 
-from pers3cluster import LimitedCluster
-from persistence3 import Persistence3
+from ptvp3.pers3cluster import LimitedCluster
+from ptvp3 import Persistence3
 from typing import List, Optional
 import threading
 from time import sleep, time
 import logging
-
+from traceback import print_exc
+import sys
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -55,6 +57,10 @@ class P3Env:
 
 
 class P3Session(threading.Thread):
+    @property
+    def env(self):
+        return self.p3env.env
+
     def __init__(self, p3env: P3Env, do_print: bool = True, delta_tick: float = 2, save_mu: int = 5,
                  daemon: bool = False):
         super().__init__()
@@ -63,13 +69,13 @@ class P3Session(threading.Thread):
         self.do_print = do_print
         self.p3env = p3env
         self.running = False
-        self.env = p3env.env
         self._stopped = False
 
         class AutoSave(threading.Thread):
             """
             Thread responsible for autoSave while running
             """
+
             def __init__(self, p3s: P3Session,
                          daemon_save: bool = False):
                 super().__init__(daemon=daemon_save)
@@ -98,7 +104,6 @@ prints output (s) as standard form time+filename+s
 
     def run(self) -> None:
         self.p3env.init_env()
-        self.env = self.p3env.env
         self.running = True
         self.autoSave.start()
         while self.running:
@@ -130,3 +135,53 @@ prints output (s) as standard form time+filename+s
     def start_wait(self):
         self.start()
         self.wait_running()
+
+
+class P3terpreter:
+    @classmethod
+    def from_param_dict(cls, params: dict):
+        return cls(params['f'],
+                   cllv=params.get('c', 2),
+                   delta_tick=params.get('t', 2.),
+                   save_mu=params.get('m', 5),
+                   daemon=params.get('d', False),
+                   sfn=params.get('s', ''),
+                   )
+
+    def __init__(self, filename: str, cllv: int = 2, delta_tick: float = 2.0, save_mu: int = 5, daemon: bool = False,
+                 sfn=''):
+        self.daemon = daemon
+        self.save_mu = save_mu
+        self.delta_tick = delta_tick
+        self.cllv = cllv
+        self.filename = filename
+        self.env = P3Env(filename, cllv)
+        self.session = P3Session(self.env, True, delta_tick, save_mu, daemon)
+        self.sfn = sfn
+
+    @property
+    def cluster(self):
+        return self.env.env
+
+    def run(self):
+        if self.sfn:
+            self.attachtofile(self.sfn)
+            return
+        raise NotImplementedError
+
+    def start(self):
+        self.session.start_wait()
+        # noinspection PyBroadException
+        try:
+            self.run()
+        except BaseException:
+            print_exc()
+
+    def attachtofile(self, fn: str):
+        exec(open(fn).read(), {'__p3penv__': self.env, '__name__': "__p3pmain__"})
+
+
+if __name__ == '__main__':
+    print(sys.argv)
+    p3p = P3terpreter.from_param_dict(json.load(open(sys.argv[1])))
+    p3p.start()

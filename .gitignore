@@ -118,3 +118,4 @@ dmypy.json
 
 *.pers3.bin
 cangiroo.py
+example_env.json
