@@ -173,7 +173,7 @@ class P3terpreter:
         # noinspection PyBroadException
         try:
             self.run()
-        except BaseException:
+        except Exception:
             print_exc()
 
     def attachtofile(self, fn: str):
