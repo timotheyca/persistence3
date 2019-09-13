@@ -177,4 +177,4 @@ class P3terpreter:
             print_exc()
 
     def attachtofile(self, fn: str):
-        exec(open(fn).read(), {'__p3penv__': self.env, '__name__': "__p3pmain__"})
+        exec(open(fn).read(), {'__p3penv__': self.cluster, '__name__': "__p3pmain__"})
