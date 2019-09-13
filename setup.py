@@ -1,9 +1,5 @@
 from setuptools import setup
 
-# rM.m     - release
-# bM.m.B   - beta
-# aN.m.B.R - alpha
-
 setup(
     name='ptv-p3',
     version='a0.0.1.1',
