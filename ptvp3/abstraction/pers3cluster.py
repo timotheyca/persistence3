@@ -2,7 +2,7 @@
 """
 
 
-from typing import List, Iterator, Hashable, Iterable
+from typing import List, Iterator, Hashable, Iterable, overload
 from itertools import cycle as _cycle
 
 
@@ -72,6 +72,16 @@ class DynamicCluster:
         if k not in self:
             self[k] = d
         return self[k]
+
+    def update(self, e=None, **f):
+        try:
+            self.update(e.keys())
+        except AttributeError:
+            pass
+        for k, v in e:
+            self[k] = v
+        for k in f:
+            self[k] = f[k]
 
 
 class LimitedCluster(DynamicCluster):
