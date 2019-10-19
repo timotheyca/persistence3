@@ -74,6 +74,11 @@ class DynamicCluster:
         return self[k]
 
     def update(self, e=None, **f):
+        """
+        reimplementation of get of dict
+        :param e:
+        :return:
+        """
         try:
             self.update(e.keys())
         except AttributeError:
