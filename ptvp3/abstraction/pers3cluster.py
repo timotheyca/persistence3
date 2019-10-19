@@ -2,8 +2,8 @@
 """
 
 
-from typing import List, Iterator, Hashable, Iterable, overload
 from itertools import cycle as _cycle
+from typing import List, Iterator, Hashable, Iterable
 
 
 class SubClusterException(BaseException):
