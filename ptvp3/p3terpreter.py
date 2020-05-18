@@ -106,7 +106,7 @@ prints output (s) as standard form time+filename+s
         self.running = True
         self.autoSave.start()
         while self.running:
-            self.running = threading.main_thread().isAlive()
+            self.running = threading.main_thread().is_alive()
             sleep(self.delta_tick)
         self.p3env.save_all()
         if self.do_print:
@@ -116,7 +116,7 @@ prints output (s) as standard form time+filename+s
     def stop_seq(self):
         if self._stopped:
             return
-        while self.autoSave.isAlive():
+        while self.autoSave.is_alive():
             self.log("stopping autoSave")
             self.autoSave.join(self.delta_tick)
         self._stopped = True

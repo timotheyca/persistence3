@@ -28,6 +28,7 @@ class DynamicCluster:
         for _d in self.dicts:
             if key in _d:
                 _d[key] = value
+                return
         next(self.get_iter)[key] = value
 
     def __contains__(self, item: Hashable):
